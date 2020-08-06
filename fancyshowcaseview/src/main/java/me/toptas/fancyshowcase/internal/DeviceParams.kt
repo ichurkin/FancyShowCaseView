@@ -2,21 +2,21 @@ package me.toptas.fancyshowcase.internal
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Rect
 import android.os.Build
 import android.util.DisplayMetrics
 import android.view.View
-import android.view.Window
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import me.toptas.fancyshowcase.R
+
 
 internal interface DeviceParams {
     fun currentBackgroundColor(): Int
     fun deviceWidth(): Int
     fun deviceHeight(): Int
     fun getStatusBarHeight(): Int
-    fun getWindowContentLeft(): Int
-    fun getRotation(): Int
+    fun getWindowLeftInset(): Int
     fun isFullScreen(): Boolean
     fun aboveAPI19(): Boolean
 }
@@ -38,9 +38,7 @@ internal class DeviceParamsImpl(private val activity: Activity, view: View) : De
 
     override fun getStatusBarHeight() = getStatusBarHeight(activity)
 
-    override fun getWindowContentLeft() = getWindowContentLeft(activity)
-
-    override fun getRotation() = getRotation(activity)
+    override fun getWindowLeftInset() = getWindowLeftInset(activity)
 
     override fun isFullScreen(): Boolean {
         val windowFlags = activity.window.attributes.flags
@@ -59,11 +57,8 @@ internal fun getStatusBarHeight(context: Context): Int {
     return result
 }
 
-internal fun getWindowContentLeft(activity: Activity): Int {
-    return activity.window.findViewById<View>(Window.ID_ANDROID_CONTENT).left
+internal fun getWindowLeftInset(activity: Activity): Int {
+    val visibleFrame = Rect()
+    activity.window.decorView.getWindowVisibleDisplayFrame(visibleFrame)
+    return visibleFrame.left
 }
-
-internal fun getRotation(context: Context): Int {
-    return (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.rotation
-}
-

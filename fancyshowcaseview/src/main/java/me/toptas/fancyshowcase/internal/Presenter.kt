@@ -2,7 +2,6 @@ package me.toptas.fancyshowcase.internal
 
 import android.graphics.Rect
 import android.view.Gravity
-import android.view.Surface
 import me.toptas.fancyshowcase.FocusShape
 import me.toptas.fancyshowcase.R
 import kotlin.math.abs
@@ -134,12 +133,14 @@ internal class Presenter(private val pref: SharedPref,
         else
             device.getStatusBarHeight()
 
+        val adjustWidth = device.getWindowLeftInset()
+
         val viewPoint = IntArray(2)
 
         val point = view.getLocationInWindow(viewPoint)
         val center = CircleCenter(0, 0)
         //adjust to possible navigation buttons on the left side of the screen
-        center.x = point[0] + view.width() / 2 - device.getWindowContentLeft()
+        center.x = point[0] + view.width() / 2 - adjustWidth
         center.y = point[1] + view.height() / 2 - adjustHeight
         return center
     }
