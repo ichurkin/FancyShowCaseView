@@ -43,7 +43,7 @@ class FancyImageView : AppCompatImageView {
     private lateinit var presenter: Presenter
     private lateinit var backgroundPaint: Paint
     private lateinit var erasePaint: Paint
-    private var circleBorderPaint: Paint? = null
+    private lateinit var circleBorderPaint: Paint
     private lateinit var path: Path
     private lateinit var rectF: RectF
 
