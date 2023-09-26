@@ -25,7 +25,7 @@ interface DismissListener {
      *
      * @param id the show once id of the dismissed view
      */
-    fun onDismiss(id: String?)
+    fun onDismiss(id: String?, dismissedOnTouch: Boolean, focusedViewClicked: Boolean)
 
     /**
      * is called when a [FancyShowCaseView] is skipped because of it's show once id

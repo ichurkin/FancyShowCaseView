@@ -16,7 +16,11 @@ internal fun FancyShowCaseView.circularExitAnimation(activity: Activity,
                                                      centerY: Int,
                                                      animDuration: Int,
                                                      animationEndListener: () -> Unit) {
-    if (!isAttachedToWindow) return
+    if (!isAttachedToWindow) {
+        animationEndListener()
+        return;
+    }
+
     val revealRadius = hypot(width.toDouble(), height.toDouble()).toInt()
     ViewAnimationUtils.createCircularReveal(this,
             centerX,
