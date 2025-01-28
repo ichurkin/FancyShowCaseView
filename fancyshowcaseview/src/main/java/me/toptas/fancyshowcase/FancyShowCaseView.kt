@@ -77,6 +77,9 @@ class FancyShowCaseView @JvmOverloads constructor(context: Context, attrs: Attri
     private var mCenterY: Int = 0
     private var mRoot: ViewGroup? = null
     private var fancyImageView: FancyImageView? = null
+    //IC:added
+    private var mHideOnTouch: Boolean = false;
+    private var mFocusedViewClicked: Boolean = false;
     private var isHiding = false
 
     val focusCenterX: Int
@@ -197,6 +200,15 @@ class FancyShowCaseView @JvmOverloads constructor(context: Context, attrs: Attri
         )
     }
 
+    /**
+     * IC: added
+     * Hides FancyShowCaseView and saves result
+     */
+    fun hideOnTouch(focusedViewClicked: Boolean) {
+        mHideOnTouch = true
+        mFocusedViewClicked = focusedViewClicked
+        hide();
+    }
     /**
      * Hides FancyShowCaseView with animation
      */
@@ -326,7 +338,7 @@ class FancyShowCaseView @JvmOverloads constructor(context: Context, attrs: Attri
     fun removeView() {
         if (fancyImageView != null) fancyImageView = null
         mRoot?.removeView(this)
-        props.dismissListener?.onDismiss(props.fancyId)
+        props.dismissListener?.onDismiss(props.fancyId, mHideOnTouch, mFocusedViewClicked)
         queueListener?.onNext()
         isHiding = false
     }
