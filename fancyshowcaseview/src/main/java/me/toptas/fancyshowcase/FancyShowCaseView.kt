@@ -16,6 +16,7 @@
 
 package me.toptas.fancyshowcase
 
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Context
@@ -43,6 +44,7 @@ import me.toptas.fancyshowcase.ext.globalLayoutListener
 import me.toptas.fancyshowcase.ext.rootView
 import me.toptas.fancyshowcase.internal.AndroidProperties
 import me.toptas.fancyshowcase.internal.AnimationPresenter
+import me.toptas.fancyshowcase.internal.DashInfo
 import me.toptas.fancyshowcase.internal.DeviceParamsImpl
 import me.toptas.fancyshowcase.internal.FadeOutAnimation
 import me.toptas.fancyshowcase.internal.FancyImageView
@@ -75,6 +77,7 @@ class FancyShowCaseView @JvmOverloads constructor(context: Context, attrs: Attri
     private var mCenterY: Int = 0
     private var mRoot: ViewGroup? = null
     private var fancyImageView: FancyImageView? = null
+    private var isHiding = false
 
     val focusCenterX: Int
         get() = presenter.circleCenterX
@@ -166,6 +169,7 @@ class FancyShowCaseView @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setupTouchListener() {
         setOnTouchListener(OnTouchListener { _, event ->
             if (event.actionMasked == MotionEvent.ACTION_DOWN) {
@@ -185,9 +189,7 @@ class FancyShowCaseView @JvmOverloads constructor(context: Context, attrs: Attri
         })
     }
 
-    /**
-     * Starts enter animation of FancyShowCaseView
-     */ @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun startEnterAnimation() {
         animationPresenter.enterAnimation(
                 { doCircularEnterAnimation() },
@@ -199,6 +201,9 @@ class FancyShowCaseView @JvmOverloads constructor(context: Context, attrs: Attri
      * Hides FancyShowCaseView with animation
      */
     fun hide() {
+        if(isHiding) return
+        isHiding = true
+
         if (androidProps.exitAnimation != null) {
             if (androidProps.exitAnimation is FadeOutAnimation && shouldShowCircularAnimation()) {
                 doCircularExitAnimation()
@@ -234,6 +239,7 @@ class FancyShowCaseView @JvmOverloads constructor(context: Context, attrs: Attri
         inflateCustomView(R.layout.fancy_showcase_view_layout_title, object : OnViewInflateListener {
             override fun onViewInflated(view: View) {
                 val textView = view.findViewById<View>(R.id.fscv_title) as TextView
+                val textContainer = view.findViewById<RelativeLayout>(R.id.fcsv_title_container)
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     textView.setTextAppearance(props.titleStyle)
@@ -246,7 +252,7 @@ class FancyShowCaseView @JvmOverloads constructor(context: Context, attrs: Attri
                 if (props.titleSize != -1) {
                     textView.setTextSize(props.titleSizeUnit, props.titleSize.toFloat())
                 }
-                textView.gravity = props.titleGravity
+                textContainer.gravity = props.titleGravity
                 if (props.fitSystemWindows) {
                     val params = textView.layoutParams as RelativeLayout.LayoutParams
                     params.setMargins(0, getStatusBarHeight(context), 0, 0)
@@ -322,6 +328,7 @@ class FancyShowCaseView @JvmOverloads constructor(context: Context, attrs: Attri
         mRoot?.removeView(this)
         props.dismissListener?.onDismiss(props.fancyId)
         queueListener?.onNext()
+        isHiding = false
     }
 
     private fun shouldShowCircularAnimation(): Boolean {
@@ -384,6 +391,14 @@ class FancyShowCaseView @JvmOverloads constructor(context: Context, attrs: Attri
          */
         fun focusBorderSize(focusBorderSize: Int) = apply { props.focusBorderSize = focusBorderSize }
 
+        /**
+         * @param intervalOnSize size of the dashed part of the line
+         * @param intervalOffSize size of the blank part of the line
+         * @return Builder
+         */
+        fun focusDashedBorder(intervalOnSize: Float, intervalOffSize: Float) = apply {
+            props.dashedLineInfo = DashInfo(intervalOnSize, intervalOffSize)
+        }
 
         /**
          * @param titleGravity title gravity
@@ -432,6 +447,12 @@ class FancyShowCaseView @JvmOverloads constructor(context: Context, attrs: Attri
          * @return Builder
          */
         fun focusCircleRadiusFactor(factor: Double) = apply { props.focusCircleRadiusFactor = factor }
+
+        /**
+         * @param factor focus rectangle size factor (default value = 1)
+         * @return Builder
+         */
+        fun focusRectSizeFactor(factor: Double) = apply { props.focusRectSizeFactor = factor }
 
         /**
          * @param layoutResource custom view layout resource
@@ -545,14 +566,14 @@ class FancyShowCaseView @JvmOverloads constructor(context: Context, attrs: Attri
         /**
          * Focus animation max value. Bigger value makes larger focus area
          */
-        fun focusAnimationMaxValue(focusAnimationMaxValue: Int) = apply {
+        fun focusAnimationMaxValue(focusAnimationMaxValue: Double) = apply {
             props.focusAnimationMaxValue = focusAnimationMaxValue
         }
 
         /**
          * Step for focus animation. Default value is 1.
          */
-        fun focusAnimationStep(focusAnimationStep: Int) = apply { props.focusAnimationStep = focusAnimationStep }
+        fun focusAnimationStep(focusAnimationStep: Double) = apply { props.focusAnimationStep = focusAnimationStep }
 
         /**
          * Shows the FancyShowCaseView after a delay.
