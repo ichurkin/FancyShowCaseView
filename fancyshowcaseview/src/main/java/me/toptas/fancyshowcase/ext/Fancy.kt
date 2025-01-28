@@ -47,6 +47,11 @@ internal fun FancyShowCaseView.circularEnterAnimation(activity: Activity,
                                                       revealRadius: Int,
                                                       animDuration: Int,
                                                       animationEndListener: () -> Unit) {
+    if (!isAttachedToWindow) {
+        animationEndListener()
+        return;
+    }
+
     ViewAnimationUtils.createCircularReveal(this,
             centerX,
             centerY,
