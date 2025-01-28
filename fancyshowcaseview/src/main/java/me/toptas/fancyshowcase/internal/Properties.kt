@@ -14,6 +14,7 @@ internal data class Properties(
         var title: String? = null,
         var fancyId: String? = null,
         var focusCircleRadiusFactor: Double = 1.0,
+        var focusRectSizeFactor: Double = 1.0,
         var backgroundColor: Int = 0,
         var focusBorderColor: Int = 0,
         var titleGravity: Int = -1,
@@ -22,6 +23,7 @@ internal data class Properties(
         var titleSizeUnit: Int = -1,
         var customViewRes: Int = 0,
         var focusBorderSize: Int = 0,
+        var dashedLineInfo: DashInfo? = null,
         var roundRectRadius: Int = 20,
         var closeOnTouch: Boolean = true,
         var enableTouchOnFocusedView: Boolean = false,
@@ -30,8 +32,8 @@ internal data class Properties(
         var delay: Long = 0,
         var autoPosText: Boolean = false,
         val animationDuration: Int = 400,
-        var focusAnimationMaxValue: Int = 20,
-        var focusAnimationStep: Int = 1,
+        var focusAnimationMaxValue: Double = 20.0,
+        var focusAnimationStep: Double = 1.0,
         var centerX: Int = 0,
         var centerY: Int = 0,
         var focusPositionX: Int = 0,
@@ -56,3 +58,5 @@ internal data class AndroidProperties(
         var exitAnimation: Animation? = FadeOutAnimation(),
         var typeface: Typeface? = null
 )
+
+internal data class DashInfo(val intervalOnSize: Float, val intervalOffSize: Float)

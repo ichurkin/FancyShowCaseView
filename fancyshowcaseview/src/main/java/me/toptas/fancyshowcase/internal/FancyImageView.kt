@@ -26,6 +26,7 @@ import android.graphics.Path
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.graphics.RectF
+import android.graphics.DashPathEffect
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
@@ -60,16 +61,28 @@ class FancyImageView : AppCompatImageView {
             circleBorderPaint?.strokeWidth = field.toFloat()
         }
 
-    private var animCounter = 0
-    private var step = 1
+    private var dashedLineInfo: DashInfo? = null
+        set(value) {
+            field = value
+            value?.let { dashInfo ->
+                circleBorderPaint?.pathEffect =
+                    DashPathEffect(
+                        floatArrayOf(dashInfo.intervalOnSize, dashInfo.intervalOffSize),
+                        1f
+                    )
+            }
+        }
+
+    private var animCounter = 0.0
+    private var step = 1.0
     private var animMoveFactor = 1.0
-    var focusAnimationMaxValue: Int = 0
-    var focusAnimationStep: Int = 0
+    var focusAnimationMaxValue: Double = 0.0
+    var focusAnimationStep: Double = 0.0
 
     var roundRectRadius = 20
     var focusAnimationEnabled = true
         set(value) {
-            animCounter = if (value) DEFAULT_ANIM_COUNTER.coerceAtMost(focusAnimationMaxValue) else 0
+            animCounter = if (value) DEFAULT_ANIM_COUNTER.coerceAtMost(focusAnimationMaxValue) else 0.0
             field = value
         }
 
@@ -150,11 +163,6 @@ class FancyImageView : AppCompatImageView {
         }
     }
 
-    /**
-     * Draws focus circle
-     *
-     * @param canvas canvas to draw
-     */
     private fun drawCircle(canvas: Canvas) {
         canvas.drawCircle(presenter.circleCenterX.toFloat(), presenter.circleCenterY.toFloat(),
                 presenter.circleRadius(animCounter, animMoveFactor), erasePaint)
@@ -165,7 +173,7 @@ class FancyImageView : AppCompatImageView {
                 moveTo(presenter.circleCenterX.toFloat(), presenter.circleCenterY.toFloat())
                 addCircle(presenter.circleCenterX.toFloat(), presenter.circleCenterY.toFloat(),
                         presenter.circleRadius(animCounter, animMoveFactor), Path.Direction.CW)
-                canvas.drawPath(this, circleBorderPaint)
+                canvas.drawPath(this, circleBorderPaint!!)
             }
         }
     }
@@ -185,7 +193,7 @@ class FancyImageView : AppCompatImageView {
                 reset()
                 moveTo(presenter.circleCenterX.toFloat(), presenter.circleCenterY.toFloat())
                 addRoundRect(rectF, roundRectRadius.toFloat(), roundRectRadius.toFloat(), Path.Direction.CW)
-                canvas.drawPath(this, circleBorderPaint)
+                canvas.drawPath(this, circleBorderPaint!!)
             }
         }
     }
@@ -200,7 +208,7 @@ class FancyImageView : AppCompatImageView {
     }
 
     companion object {
-        private const val DEFAULT_ANIM_COUNTER = 20
+        private const val DEFAULT_ANIM_COUNTER = 20.0
 
         @VisibleForTesting
         var DISABLE_ANIMATIONS_FOR_TESTING = false
@@ -215,6 +223,7 @@ class FancyImageView : AppCompatImageView {
                     focusBorderColor = props.focusBorderColor
                     focusBorderSize = props.focusBorderSize
                     roundRectRadius = props.roundRectRadius
+                    dashedLineInfo = props.dashedLineInfo
 
                     layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.MATCH_PARENT)

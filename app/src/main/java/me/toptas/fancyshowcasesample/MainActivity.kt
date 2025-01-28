@@ -62,8 +62,7 @@ class MainActivity : BaseActivity() {
         btn_focus.setOnClickListener {
             FancyShowCaseView.Builder(this)
                     .focusOn(it)
-                    .title("Focus on View only once")
-                    .showOnce("id0")
+                    .title("Circle Focus on View")
                     .build()
                     .show()
         }
@@ -139,6 +138,7 @@ class MainActivity : BaseActivity() {
                 FancyShowCaseView.Builder(this)
                         .focusOn(it)
                         .focusShape(FocusShape.ROUNDED_RECTANGLE)
+                        .focusRectSizeFactor(1.5)
                         .roundRectRadius(90)
                         .enableTouchOnFocusedView(true)
                         .title("Focus on View \n(dismiss on focus area)")
@@ -164,6 +164,7 @@ class MainActivity : BaseActivity() {
             FancyShowCaseView.Builder(this)
                     .title("Focus on larger view")
                     .focusRectAtPosition(260, 85, 480, 80)
+                    .focusRectSizeFactor(1.5)
                     .roundRectRadius(60)
                     .dismissListener(object : DismissListener {
                         override fun onDismiss(id: String?) {
@@ -186,6 +187,36 @@ class MainActivity : BaseActivity() {
                     .focusShape(FocusShape.ROUNDED_RECTANGLE)
                     .roundRectRadius(50)
                     .focusBorderSize(5)
+                    .focusBorderColor(Color.RED)
+                    .titleStyle(0, Gravity.TOP)
+                    .build()
+                    .show()
+        }
+
+        //Shows a FancyShowCaseView that has dashed rectangle border
+        btn_focus_dashed_rect.setOnClickListener {
+            FancyShowCaseView.Builder(this)
+                    .focusOn(it)
+                    .title("Focus with dashed line")
+                    .focusShape(FocusShape.ROUNDED_RECTANGLE)
+                    .roundRectRadius(50)
+                    .focusBorderSize(10)
+                    .focusDashedBorder(10.0f, 10.0f)
+                    .focusBorderColor(Color.RED)
+                    .titleStyle(0, Gravity.TOP)
+                    .build()
+                    .show()
+        }
+
+        //Shows a FancyShowCaseView that has dashed circle border
+        btn_focus_dashed_circle.setOnClickListener {
+            FancyShowCaseView.Builder(this)
+                    .focusOn(it)
+                    .title("Focus with dashed line")
+                    .focusShape(FocusShape.CIRCLE)
+                    .roundRectRadius(50)
+                    .focusBorderSize(10)
+                    .focusDashedBorder(10.0f, 10.0f)
                     .focusBorderColor(Color.RED)
                     .titleStyle(0, Gravity.TOP)
                     .build()
@@ -309,6 +340,15 @@ class MainActivity : BaseActivity() {
                     .title("Focus with delay")
                     .focusOn(it)
                     .delay(1000)
+                    .build()
+                    .show()
+        }
+
+        btn_show_once.setOnClickListener {
+            FancyShowCaseView.Builder(this)
+                    .focusOn(it)
+                    .title("Clean storage to see this again")
+                    .showOnce("id0")
                     .build()
                     .show()
         }
