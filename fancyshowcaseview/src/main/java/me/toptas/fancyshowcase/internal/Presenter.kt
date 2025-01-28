@@ -129,9 +129,9 @@ internal class Presenter(private val pref: SharedPref,
                 || (device.isFullScreen() && !props.fitSystemWindows))
 
         val adjustHeight = if (shouldAdjustYPosition)
-            0
-        else
             device.getStatusBarHeight()
+        else
+            0
 
         val adjustWidth = device.getWindowLeftInset()
 
